@@ -53,7 +53,3 @@ int main(void)
       }
   }
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 5da0f8f4283a11e05c81bca1fa4cb7b8c68840a8
