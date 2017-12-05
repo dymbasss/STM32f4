@@ -14,21 +14,21 @@ int main(void)
 
     if(GPIO_ReadInputDataBit(GPIOE, B_LEFT) == 1)
       {
-	GPIO_SetBits(GPIOA, RGB[j]);
+	GPIO_ResetBits(GPIOA, RGB[j]);
       }
     else
       {
-	GPIO_ResetBits(GPIOA, RGB[j]);
+	GPIO_SetBits(GPIOA, RGB[j]);
 	for(int i = 0; i < SWITCH_DELAY; i++)
 	  {
 	  }
-	GPIO_SetBits(GPIOA, RGB[j]);
+	GPIO_ResetBits(GPIOA, RGB[j]);
 	for(int i = 0; i < SWITCH_DELAY / 25; i++)
 	  {
 	  }
-	if (j>=2)
+	if (j >= 2)
 	  {
-	    j =0;
+	    j = 0;
 	  }
 	else
 	  {
@@ -38,22 +38,22 @@ int main(void)
     
     if(GPIO_ReadInputDataBit(GPIOE, B_RIGHT) == 1)
       {
-	GPIO_SetBits(GPIOA, RGB[j]);
+	GPIO_ResetBits(GPIOA, RGB[j]);
       }
     else
       {
-	GPIO_ResetBits(GPIOA, RGB[j]);
+	GPIO_SetBits(GPIOA, RGB[j]);
 	for(int i = 0; i < SWITCH_DELAY; i++)
 	  {
 	  }
-	GPIO_SetBits(GPIOA, RGB[j]);
+	GPIO_ResetBits(GPIOA, RGB[j]);
 	for(int i = 0; i < SWITCH_DELAY / 25; i++)
 	  {
 	  }
-	if (j<=0)
+	if (j <= 0)
 	  {
-	    j =2;
-	  }
+	    j = 2;
+	  }	
 	else
 	  {
 	    j--;

@@ -25,7 +25,6 @@ static int c_led(void) // RGB_LED
   led_init_struct.GPIO_Mode = GPIO_Mode_OUT;
   led_init_struct.GPIO_OType = GPIO_OType_PP;
   led_init_struct.GPIO_Speed = GPIO_Speed_100MHz;
-  led_init_struct.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOA, &led_init_struct);
   GPIO_SetBits(GPIOA, L_PIN_RED | L_PIN_GREEN | L_PIN_BLUE);
   return 0;
