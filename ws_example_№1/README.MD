@@ -1,7 +1,7 @@
 Compile and launch provided example. Explore
 code.
 
-- Set system clock frequency ½ of maximal (84MHz).
+- Set system clock frequency ½ of maximal (84MHz). Main - 168MHz.
 
 - Flash LEDs on evaluation board from 1 to 4 in an
 endless loop.
