@@ -6,4 +6,4 @@ Implement using timers and interrupts:
 
 - On user button press change LED flashing direction
 
-- Both task must be accomplished in two variants – without interrupts
+- Both task must be accomplished in two variants – with interrupts
