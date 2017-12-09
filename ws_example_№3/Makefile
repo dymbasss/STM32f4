@@ -19,7 +19,7 @@
 
 all: images
 
-BUILD_HOME = ../..
+BUILD_HOME=../..
 
 BINARY = main
 

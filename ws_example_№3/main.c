@@ -11,7 +11,6 @@
 
 static uint16_t RGB[] = {L_PIN_RED, L_PIN_GREEN, L_PIN_BLUE};
 static uint16_t j;
-static uint32_t timer = 0;
 static int button_left;
 static int button_right;
 
@@ -30,7 +29,6 @@ static int c_led(void) // RGB_LED
   led_init_struct.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_Init(GPIOA, &led_init_struct);
   GPIO_SetBits(GPIOA, L_PIN_RED | L_PIN_GREEN | L_PIN_BLUE);
-  
   return 0;
 }
 
@@ -42,7 +40,7 @@ static int c_button(void) // BUTTON L & R
   NVIC_InitTypeDef b_nvic_init_struct;
   EXTI_InitTypeDef b_exti_init_struct;
   
-  /* Enable peripheral clock for buttons port */
+   /* Enable peripheral clock for buttons port */
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
   /* Init button */
   b_init_struct.GPIO_Pin = B_LEFT | B_RIGHT;
@@ -74,7 +72,6 @@ static int c_button(void) // BUTTON L & R
   b_nvic_init_struct.NVIC_IRQChannelSubPriority = 0x01;
   b_nvic_init_struct.NVIC_IRQChannel = EXTI1_IRQn;
   NVIC_Init(&b_nvic_init_struct);
-  
   return 0;
 }
 
@@ -93,13 +90,22 @@ static int c_timer(void)
   t_init_struct.TIM_ClockDivision = 0;
   t_init_struct.TIM_CounterMode = TIM_CounterMode_Up;
   TIM_TimeBaseInit(TIM2, &t_init_struct);
+  /*Interruption on up-dating*/
+  TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
   /* On */ 
   TIM_Cmd(TIM2, ENABLE);
+
+  t_nvic_init_struct.NVIC_IRQChannel = TIM2_IRQn;
+  t_nvic_init_struct.NVIC_IRQChannelPreemptionPriority = 0;
+  t_nvic_init_struct.NVIC_IRQChannelSubPriority = 1;
+  t_nvic_init_struct.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&t_nvic_init_struct);
   
   return 0;
 }
 
 //-----------------------------------------------------------------------
+
 
 void EXTI0_IRQHandler(void)
 {
@@ -124,56 +130,48 @@ void EXTI1_IRQHandler(void)
 
 void color_RGB_LEFT(void)
 {
-  j++;
-  if (j >= 3) j = 0;
+  if (button_left == 0)
+    {
+      GPIO_SetBits(GPIOA, RGB[j]);
+      j++;
+      if (j >= 3) j = 0;
+      GPIO_ResetBits(GPIOA, RGB[j]);
+    }
 }
 
-void color_RBG_RIGHT(void)
+void color_RGB_RIGHT(void)
 {
-  if (j <= 0) j = 3;
-  j--;
+  if (button_right == 0)
+    {
+      GPIO_SetBits(GPIOA, RGB[j]);
+      if (j <= 0) j = 3;
+      j--;
+      GPIO_ResetBits(GPIOA, RGB[j]);
+    }
+    }
+
+void TIM2_IRQHandler(void)
+{
+  if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+    {
+      TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+      
+      color_RGB_LEFT();
+      color_RGB_RIGHT();
+    }
 }
 
 int main(void)
 {
   j = 0;
-  timer = 0;
   button_left = 1;
   button_right = 1;
-  
   c_led();
   c_button();
   c_timer();
   
   while (1)
     {
-      timer = TIM_GetCounter(TIM2);
-
-      if (button_left == 0)
-	{
-	  if (timer == 0)
-	    {
-	      GPIO_ResetBits(GPIOA, RGB[j]);
-	    }
-	  else if (timer == 999999)
-	    {
-	      GPIO_SetBits(GPIOA, RGB[j]);
-	      color_RGB_LEFT();
-	    }
-	}
-
-      if (button_right == 0)
-	{
-	  if (timer == 0)
-	    {
-	      GPIO_ResetBits(GPIOA, RGB[j]);
-	    }
-	  else if (timer == 999999)
-	    {
-	      GPIO_SetBits(GPIOA, RGB[j]);
-	      color_RBG_RIGHT();
-	    }
-	}
     }
 }
     
