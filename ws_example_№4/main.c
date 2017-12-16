@@ -10,7 +10,7 @@
 #define B_RIGHT GPIO_Pin_1
 
 #define PWM_FREQ 100 //Hz PWM_freq = timer_tick_freq / (TIM_Period + 1)
-#define PERIOD (uint16_t)(1000000 / PWM_FREQ - 1) // 10 kHz -> 8399 tacts = (84MHz / 10000) - 1 
+#define PERIOD (uint16_t)(1000000 / PWM_FREQ - 1) // 10 kHz -> 8399 tacts
 
 //static uint16_t RGB[] = {L_PIN_RED, L_PIN_GREEN, L_PIN_BLUE};
 static uint16_t j;
@@ -61,7 +61,7 @@ static int c_timer(void)
 
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
   /* Init timer */
-  t_init_struct.TIM_Period = 1000000 - 1;
+  t_init_struct.TIM_Period = 10000 - 1;
   t_init_struct.TIM_Prescaler = 84 - 1;
   t_init_struct.TIM_ClockDivision = 0;
   t_init_struct.TIM_CounterMode = TIM_CounterMode_Up;
@@ -92,7 +92,7 @@ static int c_pwm(void)
 {
   TIM_OCInitTypeDef oc_init_struct;
   
-  oc_init_struct.TIM_Pulse = 0;    // (timer_period + 1) * DUTY_CYCLE) / 100 - 1
+  oc_init_struct.TIM_Pulse = /*(uint16_t)(PWM_FREQ / PERIOD * 100)*/ 0;    // (timer_period + 1) * DUTY_CYCLE) / 100 - 1
   oc_init_struct.TIM_OCMode = TIM_OCMode_PWM1;
   oc_init_struct.TIM_OutputState = TIM_OutputState_Enable;
   oc_init_struct.TIM_OCPolarity = TIM_OCPolarity_Low;
@@ -156,23 +156,16 @@ static int c_button(void) // BUTTON L & R
 //-----------------------------------------------------------------------
 
 next_color_RGB(void)
-{
-  value = 300;
+{ 
   j++;
-  if (j >= 3) j = 0;
+  if (j >= 3) {j = 0;}
 }
 
-/*on_leds(void)
-{
-  if (button_right == 0 && button_left == 1)
-    {
-      TIM_CtrlPWMOutputs(TIM1, DISABLE);
-    }
-  if ( button_left == 0 && button_right == 1)
-    {
-      TIM_CtrlPWMOutputs(TIM1, ENABLE);
-    }
-    }*/
+up_color_RGB(void)
+{  
+  value += PERIOD * 10 / 100;
+  if (value >= PERIOD) {value = 0;}
+}
 
 void EXTI0_IRQHandler(void)
 {
@@ -183,7 +176,7 @@ void EXTI0_IRQHandler(void)
       button_right = 1;
       button_left = 0;
       
-      value += value + (value * 20 / 100);
+      up_color_RGB();
     }
 }
 
@@ -195,7 +188,7 @@ void EXTI1_IRQHandler(void)
       
       button_right = 0;
       button_left = 1;
-      
+      value = 0;
       next_color_RGB();
     }
 }
@@ -206,20 +199,20 @@ void TIM2_IRQHandler(void)
     {
       TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 
-      if ( j == 0)
+      if (j == 0)                                
 	{
-	  TIM_SetCompare1(TIM1, value);
-        } else {TIM_SetCompare1(TIM1, 0);}
+       	  TIM_SetCompare1(TIM1, value);
+        } else {TIM_SetCompare1(TIM1, 0);}   // for led solo
 
-      if ( j == 1)
+      if (j == 1)
 	{
 	  TIM_SetCompare2(TIM1, value);
         } else {TIM_SetCompare2(TIM1, 0);}
 
-      if ( j == 2)
+      if (j == 2)
 	{
 	  TIM_SetCompare3(TIM1, value);
-        } else {TIM_SetCompare3(TIM1, 0);}
+	} else {TIM_SetCompare3(TIM1, 0);}
     }
 }
 
@@ -229,7 +222,7 @@ int main(void)
   button_left = 1;
   button_right = 1;
   j = 0;
-  value = 300;
+  value = 0;
   
   c_led();
   c_timer();
