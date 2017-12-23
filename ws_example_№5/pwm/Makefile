@@ -14,5 +14,5 @@ $(LIB_A): $(OBJS)
 	$(AR) r $@ $(OBJS)
 
 lib-copy: $(LIB_A)
-	cp -f $(LIB_A) $(BUILD_HOME)/src/ws_example/lib_all
+	cp -f $(LIB_A) $(BUILD_HOME)/src/ws_example_№5/lib_all
 

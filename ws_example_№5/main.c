@@ -2,11 +2,11 @@
 #include "pwm/pwm.h"
 
 #define PWM_FREQ 100 // Hz PWM_freq = timer_tick_freq / (TIM_Period + 1)
-#define PERIOD (uint32_t)(1000000 / PWM_FREQ - 1) // 10 kHz -> 8399 tacts
+#define PERIOD (uint16_t)(1000000 / PWM_FREQ - 1) // 10 kHz -> 8399 tacts
 
-static uint32_t r_value;
-static uint32_t g_value;
-static uint32_t b_value;
+static uint16_t r_value;
+static uint16_t g_value;
+static uint16_t b_value;
 
 static uint16_t RGB[] = {GPIO_Pin_14, GPIO_Pin_12, GPIO_Pin_15};
 

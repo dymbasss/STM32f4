@@ -43,7 +43,7 @@ void c_led(void) // RGB_LED
 
 //-----------------------------------------------------------------------
 
-void c_timer(uint32_t PERIOD)
+void c_timer(uint16_t PERIOD)
 {
   TIM_TimeBaseInitTypeDef  t_init_struct;
 
