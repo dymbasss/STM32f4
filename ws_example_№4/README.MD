@@ -1,4 +1,4 @@
-Configure PWM to light RGB diode
+Configure PWM to light RGB diode:
 
 - By User button press increase	brightness on 20%
 
